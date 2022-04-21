@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Conjunto Potencia</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <script src="https://d3js.org/d3.v4.js"></script>
+  </head>
+  <body>
+    <h2 id="team">Grupo 5</h2>
+    <div class="container">
+      <h1 class="mt-5">Conjunto Potencia</h1>
+      <div class="input-group mt-3">
+        <input type="text" class="form-control" id="fib-n" placeholder="Ingrese elementos separados por coma ...">
+        <button class="btn btn-outline-secondary" type="button" id="calc-btn">
+          <i class="fa fa-angle-double-right"></i>
+        </button>
+      </div>
+
+      <table id="result-table">
+        <thead>
+          <tr>
+            <th scope="col">Input</th>
+            <th scope="col">Tiempo JS</th>
+            <th scope="col">Tiempo WASM</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+      <!-- <div id="chart_div"></div> -->
+
+    </div>
+
+
+    <script type="module" src="allSubsetsUtils.js"></script>
+    <script type="module" src="allSubsetsWASM.js"></script>
+    <script type="module" src="wrapper.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://requirejs.org/docs/release/2.3.5/minified/require.js"></script>
+
+
+  </body>
+</html>
