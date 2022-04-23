@@ -15,7 +15,7 @@
       <h1 class="mt-5">Conjunto Potencia</h1>
       <div class="input-group mt-3">
         <input type="text" class="form-control" id="fib-n" placeholder="Ingrese elementos separados por coma ...">
-        <button class="btn btn-outline-secondary" type="button" id="calc-btn">
+	<button class="btn btn-outline-secondary" type="button" id="calc-btn" onclick="pressBtn()">
           <i class="fa fa-angle-double-right"></i>
         </button>
       </div>
@@ -34,13 +34,30 @@
       <!-- <div id="chart_div"></div> -->
 
     </div>
+   
+    <script src="allSubsetsWASM.js"></script>
+    <script>
+      function pressBtn() {
+	const func = Module.cwrap('printPowerSet', null, ['number', 'number']);
+	const arr = ['a', 'b', 'c', 'd'];
 
+	const chars = arr.map(x => x.charCodeAt(0));
+	console.log(chars);
 
-    <script type="module" src="allSubsetsUtils.js"></script>
-    <script type="module" src="allSubsetsWASM.js"></script>
-    <script type="module" src="wrapper.js"></script>
+	const ptrArray = new Int8Array(arr.length); 
+	
+	for (let i = 0; i < arr.length; i++)
+	{
+	  ptrArray[i] = chars[i];
+	}
+	
+	arrayBuffer = Module._malloc(arr.length * ptrArray.BYTES_PER_ELEMENT);
+
+	Module.HEAP8.set(ptrArray, arrayBuffer);
+	func(arrayBuffer, arr.length);
+      }
+  </script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script src="https://requirejs.org/docs/release/2.3.5/minified/require.js"></script>
 
 
   </body>
