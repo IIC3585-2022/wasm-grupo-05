@@ -35,17 +35,54 @@
 
     </div>
    
-    <script src="allSubsetsWASM.js"></script>
-    <script>
-      function pressBtn() {
-	const func = Module.cwrap('printPowerSet', null, ['number', 'number']);
-	const arr = ['a', 'b', 'c', 'd'];
+    <script src="allSubsets.js"></script>
+    <script>   
+      const calcBtn = document.getElementById("calc-btn");
+      let fibN = document.getElementById("fib-n").value.split(',');
+      let inputLen = fibN.length;
+      const get_bit = (num, bit) => {
+	let temp = (1 << bit);
+	temp = temp & num;
+	if (temp === 0) {
+	    return 0;
+	}
 
-	const chars = arr.map(x => x.charCodeAt(0));
-	console.log(chars);
+	return 1;
+      };
 
-	const ptrArray = new Int8Array(arr.length); 
+  const get_all_subsets = (v, sets) => {
+    let subsets_count = Math.pow(2, v.length);
+    for (let i = 0; i < subsets_count; i++) {
+        let st = new Set([]);
+        for (let j = 0; j < v.length; j++) {
+            if (get_bit(i, j) === 1) {
+                st.add(v[j]);
+            }
+        }
+      console.log(st);
+        sets.push(st);
+    }
+};
 	
+      function pressBtn() {
+	fibN = document.getElementById("fib-n").value.split(',');
+	inputLen = fibN.length;
+	let jsTime = jsRunner(fibN);
+	let cTime = cRunner(fibN, inputLen, Module);
+	addToTable([jsTime, cTime]);
+      }
+    
+    const jsRunner = (arr) => {
+      const secondsJS = new Date().getTime();
+      //console.log(get_all_subsets(arr, []))
+      get_all_subsets(arr, []);
+      const javascripTime = (new Date().getTime()) - secondsJS;
+      return javascripTime;
+    }
+
+    const cRunner = (arr, inputLen, Module) => {
+	const ptrArray = new Int8Array(arr.length); 
+	const chars = arr.map(x => x.charCodeAt(0)); 
 	for (let i = 0; i < arr.length; i++)
 	{
 	  ptrArray[i] = chars[i];
@@ -54,8 +91,24 @@
 	arrayBuffer = Module._malloc(arr.length * ptrArray.BYTES_PER_ELEMENT);
 
 	Module.HEAP8.set(ptrArray, arrayBuffer);
-	func(arrayBuffer, arr.length);
-      }
+
+	const secondsC = new Date().getTime();
+	Module._printPowerSet(arrayBuffer, inputLen);
+	const cTime = (new Date().getTime()) - secondsC;
+	return cTime;
+    }
+
+    const addToTable = (resultArr) => {
+	const table = document.getElementById("result-table");
+	let row = table.insertRow(-1);
+	let cell1 = row.insertCell(0);
+	let cell2 = row.insertCell(1);
+	let cell3 = row.insertCell(2);
+	cell1.innerHTML = `${fibN}`;
+	cell2.innerHTML = `${resultArr[0]} ms`;
+	cell3.innerHTML = `${resultArr[1]} ms`;
+    }
+
   </script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
