@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,7 +14,7 @@
       <h1 class="mt-5">Conjunto Potencia</h1>
       <div class="input-group mt-3">
         <input type="text" class="form-control" id="input-subset" placeholder="Ingrese elementos separados por coma ...">
-	<button class="btn btn-outline-secondary" type="button" id="calc-btn" onclick="pressBtn()">
+	      <button class="btn btn-outline-secondary" type="button" id="calc-btn" onclick="pressBtn()">
           <i class="fa fa-angle-double-right"></i>
         </button>
       </div>
@@ -29,7 +30,9 @@
         <tbody>
         </tbody>
       </table>
-      <!-- <div id="chart_div"></div> -->
+      <div id="chart_div">
+        <canvas id="chart"></canvas>
+      </div>
 
     </div>
    
@@ -66,14 +69,15 @@
         let jsTime = jsRunner(INPUT);
         let cTime = cRunner(INPUT, INPUT_LENGTH, Module);
         addToTable([jsTime, cTime]);
-      }
+        addToChart([jsTime, cTime]);
+      };
     
       const jsRunner = arr => {
         const secondsJS = new Date().getTime();
         get_all_subsets(arr, []);
         const javascripTime = (new Date().getTime()) - secondsJS;
         return javascripTime;
-      }
+      };
 
       const cRunner = (arr, INPUT_LENGTH, Module) => {
 	      const ptrArray = new Int8Array(arr.length); 
@@ -85,9 +89,9 @@
         Module._printPowerSet(arrayBuffer, INPUT_LENGTH);
         const cTime = (new Date().getTime()) - secondsC;
         return cTime;
-      }
+      };
 
-      const addToTable = (resultArr) => {
+      const addToTable = resultArr => {
         const table = document.getElementById("result-table");
         let row = table.insertRow(-1);
         let cell1 = row.insertCell(0);
@@ -96,9 +100,57 @@
         cell1.innerHTML = `${INPUT}`;
         cell2.innerHTML = `${resultArr[0]} ms`;
         cell3.innerHTML = `${resultArr[1]} ms`;
+      };
+
+      addToChart = resultArr => {
+        var xValues = JSON.parse(window.localStorage.getItem('xValues'));
+        var jsData = JSON.parse(window.localStorage.getItem('jsData'));
+        var cData = JSON.parse(window.localStorage.getItem('cData'));
+        console.log("inicial xvalues: ", xValues)
+        if (!xValues ) {
+          xValues = [1];
+          jsData = [resultArr[0]];
+          cData = [resultArr[1]];
+        } else {
+          console.log("xValues", xValues)
+          xValues.push(xValues[xValues.length -1] + 1);
+          jsData.push(parseInt(resultArr[0]));
+          cData.push(parseInt(resultArr[1]));
+        }
+        console.log("set item xvalues: ", xValues)
+        window.localStorage.setItem('xValues', JSON.stringify(xValues));
+        window.localStorage.setItem('jsData', JSON.stringify(jsData));
+        window.localStorage.setItem('cData', JSON.stringify(cData));
+        
+        new Chart("chart", {
+          type: "line",
+          data: {
+            labels: xValues,
+            datasets: [{ 
+              data: jsData,
+              borderColor: "blue",
+              fill: true,
+              label: "Tiempo JS"
+            }, { 
+              data: cData,
+              borderColor: "yellow",
+              fill: true,
+              label: "Tiempo WASM"
+            }]
+          },
+          options: {
+            legend: {display: true, labels: {
+                fontSize: 20
+            }}
+          }
+        });
+        Chart.defaults.global.defaultFontColor = "#ffffff";
+      }
+
+      window.onunload = function () {
+        window.localStorage.clear();
       }
 
     </script>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   </body>
 </html>

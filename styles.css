@@ -38,8 +38,9 @@ h2 {
 
 table {
     border-collapse: collapse;
-    width: 40%;
+    width: 45%;
     float: left;
+    padding-left: 50px;
 }
 
 th, td {
@@ -76,8 +77,16 @@ th, td {
 .fa:hover {
     color: #ffffff;
 }
-
-#chart_div {
-    width: 40%;
+#middle {
+    width: 100px;
     float: left;
+}
+#chart_div {
+    width: 45%;
+    float: right;
+}
+
+#chart {
+    width: 100%;
+    float: right;
 }
